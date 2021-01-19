@@ -1,0 +1,17 @@
+{
+    "editor.fontSize": 16,
+    "files.associations": {
+        "iosfwd": "cpp",
+        "iterator": "cpp",
+        "xlocnum": "cpp",
+        "*.tcc": "cpp",
+        "list": "cpp",
+        "functional": "cpp",
+        "random": "cpp",
+        "limits": "cpp",
+        "istream": "cpp",
+        "ostream": "cpp",
+        "xiosbase": "cpp",
+        "xstring": "cpp"
+    }
+}
