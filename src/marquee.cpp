@@ -29,7 +29,7 @@
 
 #include "Settings.h"
 
-#define VERSION "2.16"
+#define VERSION "1.0"
 
 #define HOSTNAME "GY-CLOCK-"
 #define CONFIG "/conf.txt"
@@ -128,8 +128,9 @@ static const char WEB_ACTIONS1[] PROGMEM = "<a class='w3-bar-item w3-button' hre
                                            "<a class='w3-bar-item w3-button' href='/configure'><i class='fas "
                                            "fa-cog'></i> Configure</a>";
 
-static const char WEB_ACTIONS2[] PROGMEM = "<a class='w3-bar-item w3-button' href='/pull'><i class='fas fa-cloud-download-alt'></i> Refresh Data</a>"
-                                           "<a class='w3-bar-item w3-button' href='/display'>";
+static const char WEB_ACTIONS2[] PROGMEM =
+    "<a class='w3-bar-item w3-button' href='/pull'><i class='fas fa-cloud-download-alt'></i> Refresh Data</a>"
+    "<a class='w3-bar-item w3-button' href='/display'>";
 
 static const char WEB_ACTION3[] PROGMEM = "</a><a class='w3-bar-item w3-button' href='/systemreset' onclick='return "
                                           "confirm(\"Do you want to reset to default weather settings?\")'><i "
@@ -222,8 +223,6 @@ static const char WIDECLOCK_FORM[] PROGMEM = "<form class='w3-container' action=
                                              "<button class='w3-button w3-block w3-grey w3-section w3-padding' "
                                              "type='submit'>Save</button></form>";
 
-
-
 const int TIMEOUT = 500; // 500 = 1/2 second
 int timeoutCount = 0;
 
@@ -234,7 +233,7 @@ int externalLight = LED_BUILTIN; // LED_BUILTIN is is the built in LED on the We
 void setup()
 {
     Serial.begin(115200);
-    SPIFFS.begin();
+    LittleFS.begin();
     delay(10);
 
     // Initialize digital pin for LED
@@ -545,7 +544,7 @@ void handleSystemReset()
         return webServer.requestAuthentication();
     }
     Serial.println("Reset System Configuration");
-    if (SPIFFS.remove(CONFIG))
+    if (LittleFS.remove(CONFIG))
     {
         redirectHome();
         ESP.restart();
@@ -878,7 +877,7 @@ void sendHeader()
     if (numberOfHorizontalDisplays >= 8)
     {
         webServer.sendContent("<a class='w3-bar-item w3-button' href='/configurewideclock'><i "
-                           "class='far fa-clock'></i> Wide Clock</a>");
+                              "class='far fa-clock'></i> Wide Clock</a>");
     }
     webServer.sendContent(FPSTR(WEB_ACTIONS2));
     if (displayOn)
@@ -939,7 +938,7 @@ void displayWeatherData()
 
     String temperature = m_openWeatherMapClient.getTemp(0);
 
-    if ((temperature.indexOf(".") != -1) && (temperature.length() >= (temperature.indexOf(".") + 2)))
+    if ((temperature.indexOf(".") != -1) && (temperature.length() >= (unsigned)(temperature.indexOf(".") + 2)))
     {
         temperature.remove(temperature.indexOf(".") + 2);
     }
@@ -975,23 +974,25 @@ void displayWeatherData()
         html += "<img src='http://openweathermap.org/img/w/" + m_openWeatherMapClient.getIcon(0) + ".png' alt='" +
                 m_openWeatherMapClient.getDescription(0) + "'><br>";
         html += m_openWeatherMapClient.getHumidity(0) + "% Humidity<br>";
-        html += m_openWeatherMapClient.getDirectionText(0) + " / " + m_openWeatherMapClient.getWind(0) + " <span class='w3-tiny'>" +
-                getSpeedSymbol() + "</span> Wind<br>";
+        html += m_openWeatherMapClient.getDirectionText(0) + " / " + m_openWeatherMapClient.getWind(0) +
+                " <span class='w3-tiny'>" + getSpeedSymbol() + "</span> Wind<br>";
         html += m_openWeatherMapClient.getPressure(0) + " Pressure<br>";
         html += "</div>";
         html += "<div class='w3-cell w3-container' style='width:100%'><p>";
         html += m_openWeatherMapClient.getCondition(0) + " (" + m_openWeatherMapClient.getDescription(0) + ")<br>";
         html += temperature + " " + getTempSymbol() + "<br>";
-        html += m_openWeatherMapClient.getHigh(0) + "/" + m_openWeatherMapClient.getLow(0) + " " + getTempSymbol() + "<br>";
+        html +=
+            m_openWeatherMapClient.getHigh(0) + "/" + m_openWeatherMapClient.getLow(0) + " " + getTempSymbol() + "<br>";
         html += time + "<br>";
-        html += "<a href='https://www.google.com/maps/@" + m_openWeatherMapClient.getLat(0) + "," + m_openWeatherMapClient.getLon(0) +
+        html += "<a href='https://www.google.com/maps/@" + m_openWeatherMapClient.getLat(0) + "," +
+                m_openWeatherMapClient.getLon(0) +
                 ",10000m/data=!3m1!1e3' target='_BLANK'><i class='fas "
                 "fa-map-marker' style='color:red'></i> Map It!</a><br>";
         html += "</p></div></div><hr>";
     }
 
     webServer.sendContent(String(html)); // spit out what we got
-    html = "";                        // fresh start
+    html = "";                           // fresh start
 
     sendFooter();
     webServer.sendContent("");
@@ -1161,7 +1162,7 @@ void checkDisplay()
 String writeSettings()
 {
     // Save decoded message to SPIFFS file for playback on power up.
-    File f = SPIFFS.open(CONFIG, "w");
+    File f = LittleFS.open(CONFIG, "w");
     if (!f)
     {
         Serial.println("File open failed!");
@@ -1204,13 +1205,13 @@ String writeSettings()
 
 void readSettings()
 {
-    if (SPIFFS.exists(CONFIG) == false)
+    if (LittleFS.exists(CONFIG) == false)
     {
         Serial.println("Settings File does not yet exists.");
         writeSettings();
         return;
     }
-    File fr = SPIFFS.open(CONFIG, "r");
+    File fr = LittleFS.open(CONFIG, "r");
     String line;
     while (fr.available())
     {
