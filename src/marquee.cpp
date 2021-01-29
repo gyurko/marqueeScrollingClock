@@ -35,26 +35,13 @@
 #define CONFIG "/conf.txt"
 #define BUZZER_PIN D2
 
-/* Useful Constants */
-//#define SECS_PER_MIN (60UL)
-//#define SECS_PER_HOUR (3600UL)
-//#define SECS_PER_DAY (SECS_PER_HOUR * 24L)
-
-/* Useful Macros for getting elapsed time */
-//#define numberOfSeconds(_time_) (_time_ % SECS_PER_MIN)
-//#define numberOfMinutes(_time_) ((_time_ / SECS_PER_MIN) % SECS_PER_MIN)
-//#define numberOfHours(_time_) ((_time_ % SECS_PER_DAY) / SECS_PER_HOUR)
-//#define elapsedDays(_time_) (_time_ / SECS_PER_DAY)
-
 // declairing prototypes
 void configModeCallback(WiFiManager *myWiFiManager);
 int8_t getWifiQuality();
 void readSettings();
-void centerPrint(String msg);
 void centerPrint(String msg, boolean extraStuff);
 void scrollMessage(String msg);
 void displayWeatherData();
-void configModeCallback(WiFiManager *myWiFiManager);
 void flashLED(int number, int delayTime);
 String getTempSymbol();
 String getSpeedSymbol();
@@ -69,7 +56,6 @@ String writeSettings();
 void readSettings();
 void scrollMessage(String msg);
 void centerPrint(String msg);
-void centerPrint(String msg, boolean extraStuff);
 String decodeHtmlString(String msg);
 void handlePull();
 void handleSaveWideClock();
@@ -271,7 +257,6 @@ void setup()
     }
     delay(1000);
     m_displayPanel.setIntensity(displayIntensity);
-    // noTone(BUZZER_PIN);
 
     // WiFiManager
     // Local intialization. Once its business is done, there is no need to keep it
