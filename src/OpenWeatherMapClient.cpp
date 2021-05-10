@@ -51,7 +51,8 @@ void OpenWeatherMapClient::updateWeather() {
   } 
   else {
     Serial.println("connection for weather data failed"); //error message if no client connect
-    Serial.println();
+    Serial.println("Host: " + String(servername));
+    Serial.println("Error: " + weathers[0].error);
     weathers[0].error = "Connection for weather data failed";
     return;
   }

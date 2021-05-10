@@ -1,0 +1,7 @@
+﻿How to configure a PC to build this code
+
+Install VS Code
+Open this folder in VS Code
+It should ask to install PlatformIO...Install it even if it doesn't ask (platformIO is an Arduino
+plugin for VSCode
+To access PlatformIO within vscode, click on the alien head icon on the left
